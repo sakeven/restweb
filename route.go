@@ -1,4 +1,4 @@
-package goweb
+package restweb
 
 import (
 	"net/http"
@@ -6,11 +6,22 @@ import (
 	"strings"
 )
 
+// GET（SELECT）：从服务器取出资源（一项或多项）。
+// POST（CREATE）：在服务器新建一个资源。
+// PUT（UPDATE）：在服务器更新资源（客户端提供改变后的完整资源）。
+// PATCH（UPDATE）：在服务器更新资源（客户端提供改变的属性）。
+// DELETE（DELETE）：从服务器删除资源。
+// HEAD：获取资源的元数据。
+// OPTIONS：获取信息，关于资源的哪些属性是客户端可以改变的。
+
 type Router interface {
 	Post(w http.ResponseWriter, r *http.Request)
 	Get(w http.ResponseWriter, r *http.Request)
 	Delete(w http.ResponseWriter, r *http.Request)
 	Put(w http.ResponseWriter, r *http.Request)
+	Patch(w http.ResponseWriter, r *http.Request)
+	Head(w http.ResponseWriter, r *http.Request)
+	Options(w http.ResponseWriter, r *http.Request)
 }
 
 func CallMethod(c interface{}, m string, rv []reflect.Value) {
@@ -76,8 +87,15 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			realRouter.Get(w, r)
 		case "PUT":
 			realRouter.Put(w, r)
-		case "Delete":
+		case "DELETE":
 			realRouter.Delete(w, r)
+		case "PATCH":
+			realRouter.Patch(w, r)
+		case "HEAD":
+			realRouter.Head(w, r)
+		case "OPTIONS":
+			realRouter.Options(w, r)
+
 		}
 	} else {
 		http.Error(w, "no such page", 404)

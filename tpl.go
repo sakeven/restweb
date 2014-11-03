@@ -1,4 +1,4 @@
-package goweb
+package restweb
 
 import (
 	"html/template"

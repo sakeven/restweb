@@ -1,4 +1,4 @@
-package goweb
+package restweb
 
 import (
 	"fmt"
@@ -46,4 +46,9 @@ func CheckMail(mail string) bool {
 		return true
 	}
 	return false
+}
+
+func GetTime() (t int64) {
+	t = time.Now().Unix()
+	return
 }

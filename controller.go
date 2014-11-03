@@ -1,11 +1,10 @@
-package goweb
+package restweb
 
 import (
 	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type Controller struct {
@@ -13,9 +12,6 @@ type Controller struct {
 }
 
 func (ct *Controller) Init(w http.ResponseWriter, r *http.Request) {
-	ct.Data = make(map[string]interface{})
-	ct.Data["test"] = 123
-	Logger.Debug("Init")
 }
 
 func (ct Controller) Post(w http.ResponseWriter, r *http.Request) {
@@ -35,13 +31,20 @@ func (ct Controller) Delete(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "No such page", http.StatusNotFound)
 }
 
-func (ct *Controller) Err400(w http.ResponseWriter, r *http.Request, title string, info string) {
-	ct.Execute(w, "view/layout.tpl", "view/400.tpl")
+func (ct Controller) Trace(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "No such page", http.StatusNotFound)
 }
 
-func (ct *Controller) GetTime() (t int64) {
-	t = time.Now().Unix()
-	return
+func (ct Controller) Patch(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "No such page", http.StatusNotFound)
+}
+
+func (ct Controller) Head(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "No such page", http.StatusNotFound)
+}
+
+func (ct Controller) Options(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "No such page", http.StatusNotFound)
 }
 
 func (ct *Controller) SetSession(w http.ResponseWriter, r *http.Request, key string, value string) {
