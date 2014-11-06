@@ -19,8 +19,7 @@ func (ct Controller) Post(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ct Controller) Get(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
-	w.Write([]byte("Hello World"))
+	http.Error(w, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Put(w http.ResponseWriter, r *http.Request) {
@@ -28,10 +27,6 @@ func (ct Controller) Put(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ct Controller) Delete(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "No such page", http.StatusNotFound)
-}
-
-func (ct Controller) Trace(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "No such page", http.StatusNotFound)
 }
 
@@ -68,7 +63,6 @@ func (c *Controller) Execute(w io.Writer, tplfiles ...string) {
 		err = t.Execute(w, c.Data)
 	}
 	if err != nil {
-		//模板产生的错误应该属于debug错误，所以不对用户显示
 		Logger.Debug(err)
 	}
 }

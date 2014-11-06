@@ -2,19 +2,10 @@ package main
 
 import (
 	"restweb"
-	// "net/http"
+	"restweb/demo/controller"
 )
 
-type Index struct {
-	restweb.Controller
-}
-
-// func (i Index) Get(w http.ResponseWriter, r *http.Request) {
-// 	w.WriteHeader(200)
-// 	w.Write([]byte("Hello world"))
-// }
-
 func main() {
-	restweb.AddRouter("/", Index{})
+	restweb.AddRouter("/", controller.Index{})
 	restweb.Run()
 }

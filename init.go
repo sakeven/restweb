@@ -3,15 +3,22 @@ package restweb
 import (
 	"golog"
 	"os"
+	"restweb/config"
 )
 
 var SessionManager *Manager
 var Logger *golog.Log
+var cfg *config.Config
 
 func init() {
+	cfg = new(config.Config)
+	cfg.ReadConfig("config/app.conf")
+
 	Logger = golog.NewLog(os.Stdout, golog.Ldebug|golog.Linfo)
-	SessionManager = NewManager()
-	Logger.Debug("Start new session manager")
-	go SessionManager.GC()
+	if cfg.SessOn {
+		SessionManager = NewManager()
+		Logger.Info("Start New Session manager")
+		go SessionManager.GC()
+	}
 	initFuncMap()
 }
