@@ -17,7 +17,7 @@ func init() {
 }
 
 const DBHost = "127.0.0.1"
-const DBName = "oj"
+const DBName = "db"
 const DBLasting = false
 
 type ids struct {

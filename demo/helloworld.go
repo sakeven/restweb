@@ -1,11 +1,12 @@
 package main
 
 import (
+	"log"
 	"restweb"
 	"restweb/demo/controller"
 )
 
 func main() {
-	restweb.AddRouter("/", controller.Index{})
-	restweb.Run()
+	restweb.RegisterController(controller.Index{})
+	log.Fatal(restweb.Run())
 }

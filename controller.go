@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"reflect"
 	"strings"
 )
 
@@ -19,6 +20,9 @@ func (ct Controller) Post(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ct Controller) Get(w http.ResponseWriter, r *http.Request) {
+	tp := reflect.TypeOf(ct)
+	// reflect.PtrTo()
+	Logger.Debugf("%T %v\n", tp, tp)
 	http.Error(w, "No such page", http.StatusNotFound)
 }
 
@@ -63,6 +67,7 @@ func (c *Controller) Execute(w io.Writer, tplfiles ...string) {
 		err = t.Execute(w, c.Data)
 	}
 	if err != nil {
+		// http.Error(w, "No such page", http.StatusNotFound)
 		Logger.Debug(err)
 	}
 }

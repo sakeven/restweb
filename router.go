@@ -1,6 +1,7 @@
 package restweb
 
 import (
+	"container/list"
 	"net/http"
 	"reflect"
 	"strings"
@@ -37,12 +38,50 @@ func GetReflectValue(w http.ResponseWriter, r *http.Request) (rv []reflect.Value
 	return
 }
 
-var RouterMap = map[string]Router{}
-
-//添加路由
-func AddRouter(pattern string, router Router) {
-	RouterMap[pattern] = router
+type Control struct {
+	Type    reflect.Type
+	Method  string
+	Pattern string
+	Action  string
 }
+
+var routerMap = map[string]Control{}
+
+var routerList = &list.List{}
+var controllerList = &list.List{}
+
+func RegisterController(controller Router) {
+	controllerList.PushBack(reflect.TypeOf(controller))
+}
+
+func AddRouter(method string, pattern string, controllerName string, action string) {
+
+	for e := controllerList.Front(); e != nil; e = e.Next() {
+		c := e.Value.(reflect.Type)
+
+		if c.Name() == controllerName {
+			routerList.PushBack(
+				&Control{Type: c, Method: method,
+					Pattern: pattern, Action: action})
+			break
+		}
+	}
+}
+
+// func AddDefaultRouter(pattern string, controller Router) {
+// 	tp := reflect.TypeOf(controller)
+// 	ct := &Control{Type: tp, Method: "", Pattern: pattern, Action: ""}
+// 	routerList.PushBack(ct)
+// }
+
+// var RouterMap = map[string]Router{}
+
+// //添加路由
+// func AddRouter(pattern string, router Router) {
+// 	v := reflect.ValueOf(router)
+// 	Logger.Debugf("%v\n", v)
+// 	RouterMap[pattern] = router
+// }
 
 var FileMap = map[string]http.Handler{}
 
@@ -68,35 +107,31 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	maxlenth := 0
-	var realRouter Router
-	for pattern, router := range RouterMap {
+	var realRouter *Control
+	for e := routerList.Front(); e != nil; e = e.Next() {
+		c := e.Value.(*Control)
+		pattern := c.Pattern
 		if len(pattern) > maxlenth && strings.HasPrefix(path, pattern) {
 			// Logger.Debug(pattern)
+			// TODO regex support
 			maxlenth = len(pattern)
-			realRouter = router
+			realRouter = c
 		}
 	}
 
 	if filemaxlenth > maxlenth {
 		realFileHandler.ServeHTTP(w, r)
 	} else if maxlenth > 0 {
-		switch r.Method {
-		case "POST":
-			realRouter.Post(w, r)
-		case "GET":
-			realRouter.Get(w, r)
-		case "PUT":
-			realRouter.Put(w, r)
-		case "DELETE":
-			realRouter.Delete(w, r)
-		case "PATCH":
-			realRouter.Patch(w, r)
-		case "HEAD":
-			realRouter.Head(w, r)
-		case "OPTIONS":
-			realRouter.Options(w, r)
-
+		action := realRouter.Action
+		if r.Method != realRouter.Method {
+			action = strings.Title(strings.ToLower(r.Method))
 		}
+		Logger.Debug(action)
+		value := reflect.New(realRouter.Type)
+		rv := GetReflectValue(w, r)
+		rm := value.MethodByName(action)
+		rm.Call(rv)
+
 	} else {
 		http.Error(w, "no such page", 404)
 	}
@@ -104,5 +139,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // 运行服务器
 func Run() error {
+	if err := RouterConf(); err != nil { //import routers
+		return err
+	}
 	return http.ListenAndServe(cfg.Port, &Server{})
 }
