@@ -1,11 +1,11 @@
 package restweb
 
 type ValidationError struct {
-	msg string
+	Key, Msg string
 }
 
 func (v *ValidationError) String() string {
-	return v.msg
+	return v.Msg
 }
 
 type Validation struct {
@@ -13,24 +13,24 @@ type Validation struct {
 	ValErrors []ValidationError
 }
 
-func (v *Validation) Required(obj interface{}) {
-	v.Apply(Required{}, obj)
+func (v *Validation) Required(obj interface{}, key string) {
+	v.Apply(&Required{}, obj, key)
 }
 
-func (v *Validation) Min(n int, min int) {
-	v.Apply(Min{min}, n)
+func (v *Validation) Min(n int, min int, key string) {
+	v.Apply(&Min{min}, n, key)
 }
 
-func (v *Validation) Max(n int, max int) {
-	v.Apply(Max{max}, n)
+func (v *Validation) Max(n int, max int, key string) {
+	v.Apply(&Max{max}, n, key)
 }
 
-func (v *Validation) Range(n int, min, max int) {
-	v.Apply(Range{min: min, max: max}, n)
+func (v *Validation) Range(n int, min, max int, key string) {
+	v.Apply(&Range{min: min, max: max}, n, key)
 }
-func (v *Validation) Mail(mail string) {
+func (v *Validation) Mail(mail string, key string) {
 	pattern := `^\w(\.?\w)*@\w(\.?\w)*\.[A-Za-z]+$`
-	v.Apply(Match{pattern}, mail)
+	v.Apply(&Mail{pattern}, mail, key)
 }
 
 // func (v *Validation) Lenth(obj []interface{}, length int) {
@@ -39,22 +39,21 @@ func (v *Validation) Mail(mail string) {
 // 	}
 // }
 
-func (v *Validation) Match(obj string, pattern string) {
-	v.Apply(Match{pattern}, obj)
+func (v *Validation) Match(obj string, pattern string, key string) {
+	v.Apply(&Match{pattern}, obj, key)
 }
 
 func (v *Validation) Clear() {
 	v.HasError = false
+	v.ValErrors = []ValidationError{}
 }
 
-func (v *Validation) Format(format string) {
-
-}
-
-func (v *Validation) Apply(vr Validator, obj interface{}) {
+func (v *Validation) Apply(vr Validator, obj interface{}, key string) {
 	if vr.IsValid(obj) {
 		return
 	}
 
 	v.HasError = true
+	verr := ValidationError{Key: key, Msg: vr.Message()}
+	v.ValErrors = append(v.ValErrors, verr)
 }
