@@ -2,7 +2,6 @@ package restweb
 
 import (
 	"fmt"
-	"regexp"
 	"time"
 )
 
@@ -35,17 +34,6 @@ func ShowGapTime(gaptime int64) string {
 	hour := gaptime / 3600
 	minute := (gaptime - hour*3600) / 60
 	return fmt.Sprintf("%d:%02d:%02d", hour, minute, sec)
-}
-
-// 检查邮箱地址格式
-func CheckMail(mail string) bool {
-	matchStr := `^\w(\.?\w)*@\w(\.?\w)*\.[A-Za-z]+$`
-	tagRx := regexp.MustCompile(matchStr)
-	tagString := tagRx.FindString(mail)
-	if tagString == mail {
-		return true
-	}
-	return false
 }
 
 func GetTime() (t int64) {

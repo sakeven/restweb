@@ -15,10 +15,4 @@ func init() {
 	cfg.ReadConfig("config/app.conf")
 
 	Logger = golog.NewLog(os.Stdout, golog.Ldebug|golog.Linfo)
-	if cfg.SessOn {
-		SessionManager = NewManager()
-		Logger.Info("Start New Session manager")
-		go SessionManager.GC()
-	}
-	initFuncMap()
 }

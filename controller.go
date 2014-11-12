@@ -1,6 +1,7 @@
 package restweb
 
 import (
+	"container/list"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -8,71 +9,98 @@ import (
 	"strings"
 )
 
+type Control struct {
+	Type    reflect.Type
+	Method  string
+	Pattern string
+	Action  string
+}
+
+var controllerList = &list.List{}
+
+func RegisterController(controller Router) {
+	ct := reflect.TypeOf(controller)
+	controllerList.PushBack(ct)
+}
+
 type Controller struct {
-	Data map[string]interface{}
+	Data   map[string]interface{}
+	W      http.ResponseWriter
+	R      *http.Request
+	Action string //method of controller being callled
+	Name   string
 }
 
-func (ct *Controller) Init(w http.ResponseWriter, r *http.Request) {
+func (ct *Controller) Init() {
 }
 
-func (ct Controller) Post(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "No such page", http.StatusNotFound)
+func (ct *Controller) Set(w http.ResponseWriter, r *http.Request, action, name string) {
+	ct.W = w
+	ct.R = r
+	ct.Action = action
+	ct.Name = name
+	ct.Data = make(map[string]interface{})
+}
+func (ct Controller) Post() {
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
-func (ct Controller) Get(w http.ResponseWriter, r *http.Request) {
-	tp := reflect.TypeOf(ct)
-	// reflect.PtrTo()
-	Logger.Debugf("%T %v\n", tp, tp)
-	http.Error(w, "No such page", http.StatusNotFound)
+func (ct Controller) Get() {
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
-func (ct Controller) Put(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "No such page", http.StatusNotFound)
+func (ct Controller) Put() {
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
-func (ct Controller) Delete(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "No such page", http.StatusNotFound)
+func (ct Controller) Delete() {
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
-func (ct Controller) Patch(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "No such page", http.StatusNotFound)
+func (ct Controller) Patch() {
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
-func (ct Controller) Head(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "No such page", http.StatusNotFound)
+func (ct Controller) Head() {
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
-func (ct Controller) Options(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "No such page", http.StatusNotFound)
+func (ct Controller) Options() {
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
-func (ct *Controller) SetSession(w http.ResponseWriter, r *http.Request, key string, value string) {
-	session := SessionManager.StartSession(w, r)
+func (ct *Controller) SetSession(key string, value string) {
+	session := SessionManager.StartSession(ct.W, ct.R)
 	session.Set(key, value)
 }
 
-func (ct *Controller) GetSession(w http.ResponseWriter, r *http.Request, key string) (value string) {
-	session := SessionManager.StartSession(w, r)
+func (ct *Controller) GetSession(key string) (value string) {
+	session := SessionManager.StartSession(ct.W, ct.R)
 	value = session.Get(key)
 	return
 }
 
-func (ct *Controller) DeleteSession(w http.ResponseWriter, r *http.Request) {
-	SessionManager.DeleteSession(w, r)
+func (ct *Controller) DeleteSession() {
+	SessionManager.DeleteSession(ct.W, ct.R)
 }
 
-func (c *Controller) Execute(w io.Writer, tplfiles ...string) {
+func (c *Controller) RenderTemplate(tplfiles ...string) {
 	t, err := ParseFiles(tplfiles...)
 	if err == nil {
-		err = t.Execute(w, c.Data)
+		err = t.Execute(c.W, c.Data)
 	}
 	if err != nil {
-		// http.Error(w, "No such page", http.StatusNotFound)
+		http.Error(c.W, "No such page", http.StatusNotFound)
 		Logger.Debug(err)
 	}
 }
 
-func (ct *Controller) GetAction(path string, pos int) string {
+func (c Controller) Render() { //auto render
+	tplpath := "views/" + strings.ToLower(c.Name) + "/" + strings.ToLower(c.Action) + ".tpl"
+	c.RenderTemplate("views/layout.tpl", tplpath)
+}
+
+func (ct Controller) GetAction(path string, pos int) string {
 	path = strings.Trim(path, "/")
 	pathsplit := strings.Split(path, "/")
 	if pos >= 0 && pos < len(pathsplit) {
@@ -81,11 +109,15 @@ func (ct *Controller) GetAction(path string, pos int) string {
 	return ""
 }
 
-func (ct *Controller) PostReader(i interface{}) (r io.Reader, err error) {
+func (ct Controller) PostReader(i interface{}) (r io.Reader, err error) {
 	b, err := json.Marshal(i)
 	if err != nil {
 		return
 	}
 	r = strings.NewReader(string(b))
 	return
+}
+
+func (c Controller) Redirect(url string) {
+	http.Redirect(c.W, c.R, url, http.StatusFound)
 }

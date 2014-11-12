@@ -11,7 +11,8 @@ import (
 
 type Config struct {
 	Port   string `json:"port"`
-	SessOn bool   `json:"sesson`
+	SessOn bool   `json:"sesson"`
+	Log    string `json:"log"`
 }
 
 func NewConfig() *Config {
