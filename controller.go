@@ -24,9 +24,8 @@ func RegisterController(controller Router) {
 }
 
 type Controller struct {
-	Data   map[string]interface{}
-	W      http.ResponseWriter
-	R      *http.Request
+	Data map[string]interface{}
+	*Context
 	Action string //method of controller being callled
 	Name   string
 }
@@ -34,63 +33,48 @@ type Controller struct {
 func (ct *Controller) Init() {
 }
 
-func (ct *Controller) Set(w http.ResponseWriter, r *http.Request, action, name string) {
-	ct.W = w
-	ct.R = r
+func (ct *Controller) Set(ctx *Context, action, name string) {
+	ct.Context = ctx
 	ct.Action = action
 	ct.Name = name
 	ct.Data = make(map[string]interface{})
+	SessionManager.StartSession(ct.Response, ct.Requset)
 }
 func (ct Controller) Post() {
-	http.Error(ct.W, "No such page", http.StatusNotFound)
+	http.Error(ct.Response, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Get() {
-	http.Error(ct.W, "No such page", http.StatusNotFound)
+	http.Error(ct.Response, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Put() {
-	http.Error(ct.W, "No such page", http.StatusNotFound)
+	http.Error(ct.Response, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Delete() {
-	http.Error(ct.W, "No such page", http.StatusNotFound)
+	http.Error(ct.Response, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Patch() {
-	http.Error(ct.W, "No such page", http.StatusNotFound)
+	http.Error(ct.Response, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Head() {
-	http.Error(ct.W, "No such page", http.StatusNotFound)
+	http.Error(ct.Response, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Options() {
-	http.Error(ct.W, "No such page", http.StatusNotFound)
-}
-
-func (ct *Controller) SetSession(key string, value string) {
-	session := SessionManager.StartSession(ct.W, ct.R)
-	session.Set(key, value)
-}
-
-func (ct *Controller) GetSession(key string) (value string) {
-	session := SessionManager.StartSession(ct.W, ct.R)
-	value = session.Get(key)
-	return
-}
-
-func (ct *Controller) DeleteSession() {
-	SessionManager.DeleteSession(ct.W, ct.R)
+	http.Error(ct.Response, "No such page", http.StatusNotFound)
 }
 
 func (c *Controller) RenderTemplate(tplfiles ...string) {
 	t, err := ParseFiles(tplfiles...)
 	if err == nil {
-		err = t.Execute(c.W, c.Data)
+		err = t.Execute(c.Response, c.Data)
 	}
 	if err != nil {
-		http.Error(c.W, "No such page", http.StatusNotFound)
+		http.Error(c.Response, "No such page", http.StatusNotFound)
 		Logger.Debug(err)
 	}
 }
@@ -116,8 +100,4 @@ func (ct Controller) PostReader(i interface{}) (r io.Reader, err error) {
 	}
 	r = strings.NewReader(string(b))
 	return
-}
-
-func (c Controller) Redirect(url string) {
-	http.Redirect(c.W, c.R, url, http.StatusFound)
 }

@@ -49,12 +49,40 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			action = strings.Title(strings.ToLower(r.Method))
 		}
 		// Logger.Debug(action)
+		ctx := &Context{Response: w, Requset: r}
+
+		do_filter := func(when int) bool {
+			for e := FilterList.Front(); e != nil; e = e.Next() {
+				filter := e.Value.(*Filters)
+
+				if filter.When != when {
+					continue
+				}
+
+				pattern := filter.Pattern
+				rx, err := regexp.Compile(pattern)
+				if err != nil {
+					return false
+				}
+				if rx.Match([]byte(path)) {
+					return filter.Filter(ctx)
+				}
+			}
+			return false
+		}
+
+		if do_filter(Before) {
+			return
+		}
 		value := reflect.New(realRouter.Type)
-		rv := GetReflectValue(w, r, action, realRouter.Type.Name())
+		rv := GetReflectValue(ctx, action, realRouter.Type.Name())
 		rm := value.MethodByName("Set")
 		rm.Call(rv)
 		rm = value.MethodByName(action)
 		rm.Call(nil)
+		if do_filter(After) {
+			return
+		}
 	} else {
 		http.Error(w, "no such page", 404)
 	}

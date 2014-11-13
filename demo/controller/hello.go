@@ -13,5 +13,5 @@ func (i Index) Home() {
 	i.Render()
 }
 func (i Index) Get() {
-	i.Render()
+	i.Response.Write([]byte("test"))
 }
