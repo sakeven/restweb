@@ -19,11 +19,11 @@ func (c *Context) GetSession(key string) string {
 	return sess.Get(key)
 }
 
-func (c *Context) Redirct(urlStr string) {
-	http.Redirect(c.Response, c.Requset, urlStr, http.StatusFound)
-
-}
-
 func (c *Context) DeleteSession() {
 	SessionManager.DeleteSession(c.Response, c.Requset)
+}
+
+func (c *Context) Redirct(urlStr string, statuscode int) {
+	http.Redirect(c.Response, c.Requset, urlStr, statuscode)
+
 }

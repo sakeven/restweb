@@ -3,7 +3,6 @@ package restweb
 import (
 	"net/http"
 	"reflect"
-	"regexp"
 	"strings"
 )
 
@@ -27,14 +26,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var realRouter *Control
 	for e := routerList.Front(); e != nil; e = e.Next() {
 		c := e.Value.(*Control)
-		pattern := c.Pattern
-		rx, err := regexp.Compile(pattern)
-		if err != nil {
-			//Logger.Debug(err)
-			return
-		}
-		// Logger.Debug(pattern, path)
-		if rx.Match([]byte(path)) {
+		if c.Rx.MatchString(path) {
 			macth = true
 			realRouter = c
 			break
@@ -42,30 +34,24 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if filemaxlenth > 0 {
+
 		realFileHandler.ServeHTTP(w, r)
+
 	} else if macth {
-		action := realRouter.Action
-		if r.Method != realRouter.Method {
-			action = strings.Title(strings.ToLower(r.Method))
-		}
-		// Logger.Debug(action)
 		ctx := &Context{Response: w, Requset: r}
 
 		do_filter := func(when int) bool {
-			for e := FilterList.Front(); e != nil; e = e.Next() {
+			for e := filterList.Front(); e != nil; e = e.Next() {
 				filter := e.Value.(*Filters)
 
 				if filter.When != when {
 					continue
 				}
 
-				pattern := filter.Pattern
-				rx, err := regexp.Compile(pattern)
-				if err != nil {
-					return false
-				}
-				if rx.Match([]byte(path)) {
-					return filter.Filter(ctx)
+				if filter.Rx.MatchString(path) {
+					if filter.Filter(ctx) {
+						return true
+					}
 				}
 			}
 			return false
@@ -74,15 +60,20 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if do_filter(Before) {
 			return
 		}
+
+		action := realRouter.Action
+		if r.Method != realRouter.Method {
+			action = strings.Title(strings.ToLower(r.Method))
+		}
+
 		value := reflect.New(realRouter.Type)
 		rv := GetReflectValue(ctx, action, realRouter.Type.Name())
 		rm := value.MethodByName("Set")
 		rm.Call(rv)
 		rm = value.MethodByName(action)
 		rm.Call(nil)
-		if do_filter(After) {
-			return
-		}
+
+		do_filter(After)
 	} else {
 		http.Error(w, "no such page", 404)
 	}

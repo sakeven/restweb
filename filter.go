@@ -2,6 +2,7 @@ package restweb
 
 import (
 	"container/list"
+	"regexp"
 )
 
 const (
@@ -11,13 +12,14 @@ const (
 
 type Filter func(ctx *Context) bool
 type Filters struct {
-	Filter  Filter
-	Pattern string
-	When    int
+	Filter Filter
+	Rx     *regexp.Regexp
+	When   int
 }
 
-var FilterList = &list.List{}
+var filterList = &list.List{}
 
 func RegisterFilters(pattern string, when int, filter Filter) {
-	FilterList.PushBack(&Filters{Filter: filter, Pattern: pattern, When: when})
+	rx := regexp.MustCompile(pattern)
+	filterList.PushBack(&Filters{Filter: filter, Rx: rx, When: when})
 }

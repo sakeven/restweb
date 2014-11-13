@@ -13,6 +13,6 @@ func main() {
 }
 
 func filter(ctx *restweb.Context) bool {
-	ctx.Redirct("/")
+	ctx.Redirct("/", 302)
 	return true
 }

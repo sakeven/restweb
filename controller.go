@@ -6,14 +6,15 @@ import (
 	"io"
 	"net/http"
 	"reflect"
+	"regexp"
 	"strings"
 )
 
 type Control struct {
-	Type    reflect.Type
-	Method  string
-	Pattern string
-	Action  string
+	Type   reflect.Type
+	Method string
+	Rx     *regexp.Regexp
+	Action string
 }
 
 var controllerList = &list.List{}

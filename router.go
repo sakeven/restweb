@@ -4,6 +4,7 @@ import (
 	"container/list"
 	"net/http"
 	"reflect"
+	"regexp"
 )
 
 // GET（SELECT）：从服务器取出资源（一项或多项）。
@@ -44,13 +45,14 @@ func AddRouter(method string, pattern string, controllerName string, action stri
 
 	for e := controllerList.Front(); e != nil; e = e.Next() {
 		c := e.Value.(reflect.Type)
-		Logger.Debug(c.Name())
+		// Logger.Debug(c.Name())
 
 		if c.Name() == controllerName {
+			rx := regexp.MustCompile(pattern)
 
 			routerList.PushBack(
 				&Control{Type: c, Method: method,
-					Pattern: pattern, Action: action})
+					Rx: rx, Action: action})
 			break
 		}
 	}
