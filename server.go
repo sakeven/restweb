@@ -44,11 +44,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			for e := filterList.Front(); e != nil; e = e.Next() {
 				filter := e.Value.(*Filters)
 
-				if filter.When != when {
-					continue
-				}
-
-				if filter.Rx.MatchString(path) {
+				if filter.When == when && filter.Rx.MatchString(path) {
 					if filter.Filter(ctx) {
 						return true
 					}

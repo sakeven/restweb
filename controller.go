@@ -76,11 +76,11 @@ func (c *Controller) RenderTemplate(tplfiles ...string) {
 	}
 	if err != nil {
 		http.Error(c.Response, "No such page", http.StatusNotFound)
-		Logger.Debug(err)
+		// Logger.Debug(err)
 	}
 }
 
-func (c Controller) Render() { //auto render
+func (c Controller) Render() { //auto render-> views/ControllerName/ActionName.tpl
 	tplpath := "views/" + strings.ToLower(c.Name) + "/" + strings.ToLower(c.Action) + ".tpl"
 	c.RenderTemplate("views/layout.tpl", tplpath)
 }

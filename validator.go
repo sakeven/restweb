@@ -88,3 +88,43 @@ func (m *Mail) IsValid(obj interface{}) bool {
 func (m *Mail) Message() string {
 	return fmt.Sprintf("E-mali address is invalid")
 }
+
+type MinSize struct {
+	min int
+}
+
+func (m *MinSize) IsValid(obj interface{}) bool {
+	// if str, ok := obj.(string); ok {
+	return len(obj) >= m.min
+	// }
+}
+
+func (m *MinSize) Message() string {
+	return fmt.Sprintf("minsize is %d", m.min)
+}
+
+type MaxSize struct {
+	max int
+}
+
+func (m *MaxSize) IsValid(obj interface{}) bool {
+	// if str, ok := obj.(string); ok {
+	return len(obj) >= m.max
+	// }
+}
+
+func (m *MaxSize) Message() string {
+	return fmt.Sprintf("minsize is %d", m.max)
+}
+
+type Lenth struct {
+	lenth int
+}
+
+func (l *Lenth) IsValid(obj interface{}) bool {
+	return l.lenth == len(obj)
+}
+
+func (l *Lenth) Message() string {
+	return fmt.Sprintf("required lenth is %d", l.lenth)
+}

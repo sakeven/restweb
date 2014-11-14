@@ -34,11 +34,17 @@ func (v *Validation) Mail(mail string, key string) {
 	v.Apply(&Mail{pattern}, mail, key)
 }
 
-// func (v *Validation) Lenth(obj []interface{}, length int) {
-// 	if len(obj) != length {
-// 		v.HasError = true
-// 	}
-// }
+func (v *Validation) MinSize(obj interface{}, min int, key string) {
+	v.Apply(&MinSize{min}, obj, key)
+}
+
+func (v *Validation) MaxSize(obj interface{}, max int, key string) {
+	v.Apply(&MaxSize{max}, obj, key)
+}
+
+func (v *Validation) Lenth(obj []interface{}, length int, key string) {
+	v.Apply(&Length{length}, obj, key)
+}
 
 func (v *Validation) Match(obj string, pattern string, key string) {
 	v.Apply(&Match{pattern}, obj, key)

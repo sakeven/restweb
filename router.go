@@ -45,7 +45,6 @@ func AddRouter(method string, pattern string, controllerName string, action stri
 
 	for e := controllerList.Front(); e != nil; e = e.Next() {
 		c := e.Value.(reflect.Type)
-		// Logger.Debug(c.Name())
 
 		if c.Name() == controllerName {
 			rx := regexp.MustCompile(pattern)
