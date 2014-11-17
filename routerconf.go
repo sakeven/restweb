@@ -22,6 +22,8 @@ func LoadRouter() error {
 		} else if err != nil {
 			return err
 		}
+
+		line = strings.Trim(line, "\n")
 		if line == "" || line[0] == '#' { //if this line is a comment
 			continue
 		}
@@ -29,11 +31,14 @@ func LoadRouter() error {
 		if idx >= 0 {                   //if # exists
 			line = line[:idx]
 		}
+		line = handLine(line)
+
 		args := strings.Split(line, " ")
 		if len(args) < 3 { //if args is to less
 			return errors.New("args is to less")
 		}
-		TrimArgs(args)
+
+		TrimArgs(args, " ")
 		method, pattern := args[0], args[1]
 		CA := strings.Split(args[2], ".")
 		if len(CA) < 2 {
@@ -45,8 +50,26 @@ func LoadRouter() error {
 	return nil
 }
 
-func TrimArgs(args []string) {
+func handLine(line string) (newline string) {
+	flag := false
+	for _, o := range line {
+		if o == '\t' || o == ' ' {
+			if flag == true {
+				continue
+			} else {
+				newline += " "
+				flag = true
+			}
+		} else {
+			flag = false
+			newline += string(o)
+		}
+	}
+	return
+}
+
+func TrimArgs(args []string, tr string) {
 	for idx, arg := range args {
-		args[idx] = strings.Trim(arg, " ") //trim space
+		args[idx] = strings.Trim(arg, tr) //trim space
 	}
 }

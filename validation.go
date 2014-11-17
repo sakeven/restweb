@@ -42,8 +42,8 @@ func (v *Validation) MaxSize(obj interface{}, max int, key string) {
 	v.Apply(&MaxSize{max}, obj, key)
 }
 
-func (v *Validation) Lenth(obj []interface{}, length int, key string) {
-	v.Apply(&Length{length}, obj, key)
+func (v *Validation) Lenth(obj []interface{}, lenth int, key string) {
+	v.Apply(&Lenth{lenth}, obj, key)
 }
 
 func (v *Validation) Match(obj string, pattern string, key string) {

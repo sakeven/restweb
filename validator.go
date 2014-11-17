@@ -2,6 +2,7 @@ package restweb
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 )
 
@@ -94,9 +95,14 @@ type MinSize struct {
 }
 
 func (m *MinSize) IsValid(obj interface{}) bool {
-	// if str, ok := obj.(string); ok {
-	return len(obj) >= m.min
-	// }
+	if str, ok := obj.(string); ok {
+		return len(str) >= m.min
+	}
+	v := reflect.ValueOf(obj)
+	if v.Kind() == reflect.Slice {
+		return v.Len() >= m.min
+	}
+	return false
 }
 
 func (m *MinSize) Message() string {
@@ -108,9 +114,14 @@ type MaxSize struct {
 }
 
 func (m *MaxSize) IsValid(obj interface{}) bool {
-	// if str, ok := obj.(string); ok {
-	return len(obj) >= m.max
-	// }
+	if str, ok := obj.(string); ok {
+		return len(str) <= m.max
+	}
+	v := reflect.ValueOf(obj)
+	if v.Kind() == reflect.Slice {
+		return v.Len() <= m.max
+	}
+	return false
 }
 
 func (m *MaxSize) Message() string {
@@ -122,7 +133,14 @@ type Lenth struct {
 }
 
 func (l *Lenth) IsValid(obj interface{}) bool {
-	return l.lenth == len(obj)
+	if str, ok := obj.(string); ok {
+		return len(str) == l.lenth
+	}
+	v := reflect.ValueOf(obj)
+	if v.Kind() == reflect.Slice {
+		return v.Len() == l.lenth
+	}
+	return false
 }
 
 func (l *Lenth) Message() string {

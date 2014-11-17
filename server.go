@@ -26,10 +26,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var realRouter *Control
 	for e := routerList.Front(); e != nil; e = e.Next() {
 		c := e.Value.(*Control)
-		if c.Rx.MatchString(path) {
+		if c.Rx.MatchString(path) { //TODO not match method
 			macth = true
 			realRouter = c
-			break
+			if c.Method == r.Method {
+				break
+			}
 		}
 	}
 
@@ -66,11 +68,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		rv := GetReflectValue(ctx, action, realRouter.Type.Name())
 		rm := value.MethodByName("Set")
 		rm.Call(rv)
+		rm = value.MethodByName("Init")
+		rm.Call(nil)
 		rm = value.MethodByName(action)
 		rm.Call(nil)
 
 		do_filter(After)
 	} else {
+		Logger.Debug(r.Method, r.URL.Path)
 		http.Error(w, "no such page", 404)
 	}
 }
@@ -85,6 +90,5 @@ func Run() error {
 		Logger.Info("Start New Session manager")
 		go SessionManager.GC()
 	}
-	initFuncMap()
 	return http.ListenAndServe(cfg.Port, &Server{})
 }
