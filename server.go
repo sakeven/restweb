@@ -23,12 +23,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	macth := false
+	var matchs []string
 	var realRouter *Control
 	for e := routerList.Front(); e != nil; e = e.Next() {
 		c := e.Value.(*Control)
 		if c.Rx.MatchString(path) { //TODO not match method
 			macth = true
 			realRouter = c
+			matchs = c.Rx.FindStringSubmatch(path)[1:]
 			if c.Method == r.Method {
 				break
 			}
@@ -71,7 +73,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		rm = value.MethodByName("Init")
 		rm.Call(nil)
 		rm = value.MethodByName(action)
-		rm.Call(nil)
+		rv = make([]reflect.Value, 0)
+		for _, j := range matchs {
+			rw := reflect.ValueOf(j)
+			rv = append(rv, rw)
+		}
+		rm.Call(rv)
 
 		do_filter(After)
 	} else {

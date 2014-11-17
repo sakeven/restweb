@@ -23,7 +23,10 @@ func (c *Context) DeleteSession() {
 	SessionManager.DeleteSession(c.Response, c.Requset)
 }
 
-func (c *Context) Redirect(urlStr string, statuscode int) {
-	http.Redirect(c.Response, c.Requset, urlStr, statuscode)
+func (c *Context) Redirect(urlStr string, code int) {
+	http.Redirect(c.Response, c.Requset, urlStr, code)
+}
 
+func (c *Context) Error(err string, code int) {
+	http.Error(c.Response, err, code)
 }

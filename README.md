@@ -5,7 +5,7 @@ light web framwork for go
 
 ##Features
 
-1. 支持路由配置文件
+1. 支持路由配置文件, 支持控制器方法参数传入
 2. 模板自动渲染
 3. session 管理
 4. 表单验证
@@ -16,5 +16,4 @@ light web framwork for go
 
 ##TODO List:
 
-2. 路由时，控制器方法参数传入
 4. 配置文件
