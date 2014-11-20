@@ -18,7 +18,7 @@ import (
 type Router interface {
 	Post()
 	Get()
-	Delete()
+	//Delete()
 	Put()
 	Patch()
 	Head()
@@ -41,6 +41,7 @@ func GetReflectValue(i ...interface{}) (rv []reflect.Value) {
 
 var routerList = &list.List{}
 
+//TODO add default router to support controller-name-url.
 func AddRouter(method string, pattern string, controllerName string, action string) {
 
 	for e := controllerList.Front(); e != nil; e = e.Next() {

@@ -36,30 +36,33 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	r.ParseForm()
+	ctx := &Context{Response: w, Requset: r}
+
+	do_filter := func(when int) bool {
+		for e := filterList.Front(); e != nil; e = e.Next() {
+			filter := e.Value.(*Filters)
+
+			if filter.When == when &&
+				(filter.Method == r.Method || filter.Method == ANY) &&
+				filter.Rx.MatchString(path) {
+				if filter.Filter(ctx) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+
+	if do_filter(Before) {
+		return
+	}
 
 	if filemaxlenth > 0 {
 
 		realFileHandler.ServeHTTP(w, r)
 
 	} else if macth {
-		ctx := &Context{Response: w, Requset: r}
-
-		do_filter := func(when int) bool {
-			for e := filterList.Front(); e != nil; e = e.Next() {
-				filter := e.Value.(*Filters)
-
-				if filter.When == when && filter.Rx.MatchString(path) {
-					if filter.Filter(ctx) {
-						return true
-					}
-				}
-			}
-			return false
-		}
-
-		if do_filter(Before) {
-			return
-		}
 
 		action := realRouter.Action
 		if r.Method != realRouter.Method {
@@ -73,6 +76,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		rm = value.MethodByName("Init")
 		rm.Call(nil)
 		rm = value.MethodByName(action)
+
+		if do_filter(Middle) {
+			return
+		}
+
 		rv = make([]reflect.Value, 0)
 		for _, j := range matchs {
 			rw := reflect.ValueOf(j)

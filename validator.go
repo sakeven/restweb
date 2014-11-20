@@ -27,8 +27,10 @@ type Min struct {
 }
 
 func (m *Min) IsValid(obj interface{}) bool {
-	n := obj.(int)
-	return n < m.min
+	if n, ok := obj.(int); ok {
+		return n < m.min
+	}
+	return false
 }
 
 func (m *Min) Message() string {
@@ -40,8 +42,10 @@ type Max struct {
 }
 
 func (m *Max) IsValid(obj interface{}) bool {
-	n := obj.(int)
-	return n > m.max
+	if n, ok := obj.(int); ok {
+		return n > m.max
+	}
+	return false
 }
 
 func (m *Max) Message() string {
@@ -54,8 +58,10 @@ type Range struct {
 }
 
 func (r *Range) IsValid(obj interface{}) bool {
-	n := obj.(int)
-	return n >= r.min && n < r.max
+	if n, ok := obj.(int); ok {
+		return n >= r.min && n < r.max
+	}
+	return false
 }
 
 func (r *Range) Message() string {
@@ -67,10 +73,12 @@ type Match struct {
 }
 
 func (m *Match) IsValid(obj interface{}) bool {
-	objs := obj.(string)
-	rx := regexp.MustCompile(m.pattern)
-	match := rx.FindString(objs)
-	return match == objs
+	if objs, ok := obj.(string); ok {
+		rx := regexp.MustCompile(m.pattern)
+		match := rx.FindString(objs)
+		return match == objs
+	}
+	return false
 }
 
 func (m *Match) Message() string {

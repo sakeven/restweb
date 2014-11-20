@@ -70,6 +70,6 @@ func handLine(line string) (newline string) {
 
 func TrimArgs(args []string, tr string) {
 	for idx, arg := range args {
-		args[idx] = strings.Trim(arg, tr) //trim space
+		args[idx] = strings.Trim(arg, tr) //trim tr
 	}
 }
