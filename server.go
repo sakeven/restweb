@@ -88,11 +88,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		rm.Call(rv)
 
-		do_filter(After)
 	} else {
 		Logger.Debug(r.Method, r.URL.Path)
 		http.Error(w, "no such page", 404)
 	}
+	do_filter(After)
 }
 
 // 运行服务器
