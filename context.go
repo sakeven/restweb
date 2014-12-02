@@ -2,11 +2,14 @@ package restweb
 
 import (
 	"net/http"
+	"net/url"
 )
 
 type Context struct {
 	Requset  *http.Request
 	Response http.ResponseWriter
+	Input    url.Values
+	Output   map[string]interface{}
 }
 
 func (c *Context) SetSession(key string, value string) {

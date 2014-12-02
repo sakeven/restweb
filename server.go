@@ -36,8 +36,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+
 	r.ParseForm()
-	ctx := &Context{Response: w, Requset: r}
+	ctx := &Context{Response: w, Requset: r, Input: r.Form}
 
 	do_filter := func(when int) bool {
 		for e := filterList.Front(); e != nil; e = e.Next() {
@@ -89,7 +90,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		rm.Call(rv)
 
 	} else {
-		Logger.Debug(r.Method, r.URL.Path)
 		http.Error(w, "no such page", 404)
 	}
 	do_filter(After)
