@@ -1,7 +1,7 @@
 restweb
 =======
 
-light web framwork for go
+light web framework for go
 
 ##Features
 
