@@ -61,6 +61,7 @@ func AddRouter(method string, pattern string, controllerName string, action stri
 var FileMap = map[string]http.Handler{}
 
 //添加静态文件路由
-func AddFile(pattern string, fileHandler http.Handler) {
-	FileMap[pattern] = fileHandler
+
+func AddFile(pattern string, dir string) {
+	FileMap[pattern] = http.FileServer(http.Dir(dir))
 }
