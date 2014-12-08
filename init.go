@@ -1,9 +1,9 @@
 package restweb
 
 import (
-	"golog"
 	"os"
 	"restweb/config"
+	"restweb/golog"
 )
 
 var SessionManager *Manager
