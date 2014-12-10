@@ -25,7 +25,6 @@ func RegisterController(controller Router) {
 }
 
 type Controller struct {
-	Data map[string]interface{}
 	*Context
 	Action string //method of controller being callled
 	Name   string
@@ -38,7 +37,6 @@ func (ct *Controller) Set(ctx *Context, action, name string) {
 	ct.Context = ctx
 	ct.Action = action
 	ct.Name = name
-	ct.Data = make(map[string]interface{})
 	SessionManager.StartSession(ct.Response, ct.Requset)
 }
 func (ct Controller) Post() {
@@ -72,11 +70,11 @@ func (ct Controller) Options() {
 func (c *Controller) RenderTemplate(tplfiles ...string) {
 	t, err := ParseFiles(tplfiles...)
 	if err == nil {
-		err = t.Execute(c.Response, c.Data)
+		err = t.Execute(c.Response, c.Output)
 	}
+
 	if err != nil {
-		http.Error(c.Response, "No such page", http.StatusNotFound)
-		// Logger.Debug(err)
+		c.Error("No such page", http.StatusNotFound)
 	}
 }
 

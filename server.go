@@ -37,8 +37,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	r.ParseForm()
-	ctx := &Context{Response: w, Requset: r, Input: r.Form}
+	ctx := NewContext(w, r)
 
 	do_filter := func(when int) bool {
 		for e := filterList.Front(); e != nil; e = e.Next() {

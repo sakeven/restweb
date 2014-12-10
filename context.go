@@ -12,6 +12,14 @@ type Context struct {
 	Output   map[string]interface{}
 }
 
+func NewContext(w http.ResponseWriter, r *http.Request) (c *Context) {
+	c = &Context{Requset: r, Response: w}
+	c.Requset.ParseForm()
+	c.Input = c.Requset.Form
+	c.Output = make(map[string]interface{})
+	return
+}
+
 func (c *Context) SetSession(key string, value string) {
 	session := SessionManager.StartSession(c.Response, c.Requset)
 	session.Set(key, value)
