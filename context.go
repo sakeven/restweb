@@ -6,38 +6,38 @@ import (
 )
 
 type Context struct {
-	Requset  *http.Request
-	Response http.ResponseWriter
-	Input    url.Values
-	Output   map[string]interface{}
+	R      *http.Request
+	W      http.ResponseWriter
+	Input  url.Values
+	Output map[string]interface{}
 }
 
 func NewContext(w http.ResponseWriter, r *http.Request) (c *Context) {
-	c = &Context{Requset: r, Response: w}
-	c.Requset.ParseForm()
-	c.Input = c.Requset.Form
+	c = &Context{R: r, W: w}
+	c.R.ParseForm()
+	c.Input = c.R.Form
 	c.Output = make(map[string]interface{})
 	return
 }
 
 func (c *Context) SetSession(key string, value string) {
-	session := SessionManager.StartSession(c.Response, c.Requset)
+	session := SessionManager.StartSession(c.W, c.R)
 	session.Set(key, value)
 }
 
 func (c *Context) GetSession(key string) string {
-	sess := SessionManager.StartSession(c.Response, c.Requset)
+	sess := SessionManager.StartSession(c.W, c.R)
 	return sess.Get(key)
 }
 
 func (c *Context) DeleteSession() {
-	SessionManager.DeleteSession(c.Response, c.Requset)
+	SessionManager.DeleteSession(c.W, c.R)
 }
 
 func (c *Context) Redirect(urlStr string, code int) {
-	http.Redirect(c.Response, c.Requset, urlStr, code)
+	http.Redirect(c.W, c.R, urlStr, code)
 }
 
 func (c *Context) Error(err string, code int) {
-	http.Error(c.Response, err, code)
+	http.Error(c.W, err, code)
 }

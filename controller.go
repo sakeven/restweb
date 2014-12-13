@@ -37,40 +37,40 @@ func (ct *Controller) Set(ctx *Context, action, name string) {
 	ct.Context = ctx
 	ct.Action = action
 	ct.Name = name
-	SessionManager.StartSession(ct.Response, ct.Requset)
+	SessionManager.StartSession(ct.W, ct.R)
 }
 func (ct Controller) Post() {
-	http.Error(ct.Response, "No such page", http.StatusNotFound)
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Get() {
-	http.Error(ct.Response, "No such page", http.StatusNotFound)
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Put() {
-	http.Error(ct.Response, "No such page", http.StatusNotFound)
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Delete() {
-	http.Error(ct.Response, "No such page", http.StatusNotFound)
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Patch() {
-	http.Error(ct.Response, "No such page", http.StatusNotFound)
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Head() {
-	http.Error(ct.Response, "No such page", http.StatusNotFound)
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
 func (ct Controller) Options() {
-	http.Error(ct.Response, "No such page", http.StatusNotFound)
+	http.Error(ct.W, "No such page", http.StatusNotFound)
 }
 
 func (c *Controller) RenderTemplate(tplfiles ...string) {
 	t, err := ParseFiles(tplfiles...)
 	if err == nil {
-		err = t.Execute(c.Response, c.Output)
+		err = t.Execute(c.W, c.Output)
 	}
 
 	if err != nil {

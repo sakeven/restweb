@@ -11,6 +11,28 @@ type Server struct {
 
 //路由，先处理静态文件，后处理控件，按照最大匹配原则匹配路由
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+	ctx := NewContext(w, r)
+
+	do_filter := func(when int) bool {
+		for e := filterList.Front(); e != nil; e = e.Next() {
+			filter := e.Value.(*Filters)
+
+			if filter.When == when &&
+				(filter.Method == r.Method || filter.Method == ANY) &&
+				filter.Rx.MatchString(r.URL.Path) {
+				if filter.Filter(ctx) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+
+	if do_filter(Before) {
+		return
+	}
+
 	path := r.URL.Path
 	path = strings.TrimRight(path, "/") + "/"
 	filemaxlenth := 0
@@ -36,28 +58,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-
-	ctx := NewContext(w, r)
-
-	do_filter := func(when int) bool {
-		for e := filterList.Front(); e != nil; e = e.Next() {
-			filter := e.Value.(*Filters)
-
-			if filter.When == when &&
-				(filter.Method == r.Method || filter.Method == ANY) &&
-				filter.Rx.MatchString(path) {
-				if filter.Filter(ctx) {
-					return true
-				}
-			}
-		}
-		return false
-	}
-
-	if do_filter(Before) {
-		return
-	}
-
 	if filemaxlenth > 0 {
 
 		realFileHandler.ServeHTTP(w, r)
