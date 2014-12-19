@@ -24,8 +24,6 @@ restweb 采用 MCV 模式并支持RESTful API 设计，是一个具有丰富特�
 
 ### Controller
 
-#### 简介
-
 以下是restweb自带的Controller
 
 	type Controller struct {
@@ -43,7 +41,7 @@ restweb 采用 MCV 模式并支持RESTful API 设计，是一个具有丰富特�
 注册控制器，注册的控制器必须具有 Router 接口
 	
 	func RegisterController(controller Router)
-####路由
+###路由
 
 1. 可以将路由定义在一个单独的文件中(config/router.conf)
 	
@@ -63,7 +61,7 @@ restweb 采用 MCV 模式并支持RESTful API 设计，是一个具有丰富特�
 
 		AddRouter(method string, pattern string, controllerName string, action string)
 		
-####上下文
+###上下文
 
 上下文Context定义为：
 
@@ -100,9 +98,35 @@ restweb 采用 MCV 模式并支持RESTful API 设计，是一个具有丰富特�
 
 	type Filter func(ctx *Context) bool
 
+过滤器有3个过滤时间
+
+	const (
+		Before = iota	//在路由之前
+		Middle			//控制器初始化之后，控制器方法调用前
+		After			//控制器方法执行后
+	)
+
 1. 过滤器函数返回值为true则为拦截，支持控制器方法调用前和后拦截、过滤
 2. 过滤器按注册的顺序安排优先级，注册早的优先级高
 3. 对于一个url，如果一个拦截器被执行，将立即停止执行其后的过滤器和控制器方法
 4. 注册过滤器
 
 		func RegisterFilters(method string, pattern string, when int, filter Filter) 
+		
+###模板
+
+1. 渲染模板文件 
+	func (c *Controller) RenderTemplate(tplfiles ...string)
+
+2. 自动渲染  //auto render-> views/ControllerName/ActionName.tpl
+
+	func (c Controller) Render()
+
+3. 注册模板函数
+
+	func AddFuncMap(key string, f interface{})
+
+4. 本框架自带的模板函数
+
+
+###调试

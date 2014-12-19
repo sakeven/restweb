@@ -78,12 +78,12 @@ func (c *Controller) RenderTemplate(tplfiles ...string) {
 	}
 }
 
-func (c Controller) Render() { //auto render-> views/ControllerName/ActionName.tpl
+func (c *Controller) Render() { //auto render-> views/ControllerName/ActionName.tpl
 	tplpath := "views/" + strings.ToLower(c.Name) + "/" + strings.ToLower(c.Action) + ".tpl"
 	c.RenderTemplate("views/layout.tpl", tplpath)
 }
 
-func (ct Controller) GetAction(path string, pos int) string {
+func (ct *Controller) GetAction(path string, pos int) string {
 	path = strings.Trim(path, "/")
 	pathsplit := strings.Split(path, "/")
 	if pos >= 0 && pos < len(pathsplit) {
@@ -92,7 +92,7 @@ func (ct Controller) GetAction(path string, pos int) string {
 	return ""
 }
 
-func (ct Controller) PostReader(i interface{}) (r io.Reader, err error) {
+func (ct *Controller) PostReader(i interface{}) (r io.Reader, err error) {
 	b, err := json.Marshal(i)
 	if err != nil {
 		return

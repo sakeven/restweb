@@ -6,6 +6,7 @@ import (
 
 var va = &Validation{}
 
+//some error occur
 func Test_Required(t *testing.T) {
 	va.Clear()
 	va.Required("", "string")
@@ -100,5 +101,18 @@ func Test_Match(t *testing.T) {
 	va.Match("qwe", `[0-9]`, "match_error")
 	if !va.HasError {
 		t.Error("match_error error")
+	}
+}
+func Test_Equal(t *testing.T) {
+	va.Clear()
+	va.Equal("123", "123", "pwd")
+	if va.HasError {
+		t.Error("Equal error")
+	}
+
+	va.Clear()
+	va.Equal("123", "321", "pwd")
+	if !va.HasError {
+		t.Error("Equal error")
 	}
 }

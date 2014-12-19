@@ -15,6 +15,9 @@ type Required struct {
 }
 
 func (r *Required) IsValid(obj interface{}) bool {
+	if objs, ok := obj.(string); ok {
+		return objs != ""
+	}
 	return obj != nil
 }
 
@@ -153,4 +156,16 @@ func (l *Lenth) IsValid(obj interface{}) bool {
 
 func (l *Lenth) Message() string {
 	return fmt.Sprintf("required lenth is %d", l.lenth)
+}
+
+type Equal struct {
+	obj interface{}
+}
+
+func (e *Equal) IsValid(obj interface{}) bool {
+	return obj == e.obj
+}
+
+func (e *Equal) Message() string {
+	return fmt.Sprintf("two arguments are not equal")
 }

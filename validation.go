@@ -13,6 +13,12 @@ type Validation struct {
 	ValErrors []ValidationError
 }
 
+func (v *Validation) AppendError(key, msg string) {
+	v.HasError = true
+	verr := ValidationError{Key: key, Msg: msg}
+	v.ValErrors = append(v.ValErrors, verr)
+}
+
 func (v *Validation) Required(obj interface{}, key string) {
 	v.Apply(&Required{}, obj, key)
 }
@@ -50,6 +56,10 @@ func (v *Validation) Match(obj string, pattern string, key string) {
 	v.Apply(&Match{pattern}, obj, key)
 }
 
+func (v *Validation) Equal(obj1 interface{}, obj2 interface{}, key string) {
+	v.Apply(&Equal{obj2}, obj1, key)
+}
+
 func (v *Validation) Clear() {
 	v.HasError = false
 	v.ValErrors = []ValidationError{}
@@ -59,10 +69,7 @@ func (v *Validation) Apply(vr Validator, obj interface{}, key string) {
 	if vr.IsValid(obj) {
 		return
 	}
-
-	v.HasError = true
-	verr := ValidationError{Key: key, Msg: vr.Message()}
-	v.ValErrors = append(v.ValErrors, verr)
+	v.AppendError(key, vr.Message())
 }
 
 func (v *Validation) RenderErrMap() (ValidError map[string]string) {
