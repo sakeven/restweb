@@ -10,9 +10,10 @@ import (
 )
 
 type Config struct {
-	Port   string `json:"port"`
-	SessOn bool   `json:"sesson"`
-	Log    string `json:"log"`
+	Port    string `json:"port"`
+	SessOn  bool   `json:"sesson"`
+	Log     string `json:"log"`
+	PkgPath string `json:pkgpath`
 }
 
 func NewConfig() *Config {

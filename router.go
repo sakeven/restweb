@@ -45,8 +45,7 @@ var routerList = &list.List{}
 func AddRouter(method string, pattern string, controllerName string, action string) {
 
 	for e := controllerList.Front(); e != nil; e = e.Next() {
-		c := e.Value.(reflect.Type)
-
+		c := e.Value.(reflect.Type).Elem()
 		if c.Name() == controllerName {
 			rx := regexp.MustCompile(pattern)
 

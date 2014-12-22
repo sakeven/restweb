@@ -23,5 +23,9 @@ _testmain.go
 *.test
 *.prof
 
+#Swap files
 .Ds_Store
+
+# Excuteable files
 helloworld
+cmd
