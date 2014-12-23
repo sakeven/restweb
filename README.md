@@ -18,6 +18,21 @@ light web framework for go
 
 ##使用文档
 
+###Install cmd tool
+```bash
+cd restweb/restweb
+go install
+export PATH="$GOPATH/bin:$PATH"
+```
+cmds:
+
+```
+restweb new app
+restweb build app
+restweb run app
+restweb clean app
+```
+
 ###简介
 
 restweb 采用 MCV 模式并支持RESTful API 设计，是一个具有丰富特性的轻量级web框架
