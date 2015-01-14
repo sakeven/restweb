@@ -35,7 +35,7 @@ restweb clean app
 
 ###简介
 
-restweb 采用 MCV 模式并支持RESTful API 设计，是一个具有丰富特性的轻量级web框架
+restweb 采用 MVC 模式并支持RESTful API 设计，是一个具有丰富特性的轻量级web框架
 
 ### Controller
 

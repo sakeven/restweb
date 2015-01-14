@@ -36,7 +36,13 @@ func buildApp() {
 	generateRouter()
 	os.Chdir(appName)
 	cmd := exec.Command("go", "build")
-	cmd.Run()
+	cmd.Stdout = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Println("Build Failed\n[Error] ", err)
+	} else {
+		log.Println("Build Succeed")
+	}
 }
 
 func walkFn(path string, info os.FileInfo, err error) error {
@@ -68,11 +74,12 @@ func walkAstFiles(fset *token.FileSet, path string, pkg *ast.Package) {
 			if funcdecl, ok := decl.(*ast.FuncDecl); ok && funcdecl.Doc != nil {
 				for _, cmt := range funcdecl.Doc.List {
 					if strings.HasPrefix(cmt.Text, "//@") {
+						adec.Clear()
 						err := phaseApp(cmt.Text)
 						if err != nil {
 							log.Fatal("[error] ", fset.Position(cmt.Pos()), err)
 						}
-						adec.Clear()
+
 						RouterInfos = append(RouterInfos,
 							RouterInfo{ControllerName: ControllerName,
 								URL:    template.HTML(adec.URL),

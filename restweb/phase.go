@@ -2,31 +2,8 @@ package main
 
 import (
 	"errors"
-	// "log"
 	"strings"
 )
-
-// func parseDecorator(decorator string) (url, method string, err error) {
-// 	des := strings.Split(decorator, "@")
-// 	if len(des) < 3 {
-// 		err = errors.New("Decorators miss")
-// 		return
-// 	}
-// 	urlPair := strings.Split(des[1], ":")
-// 	if len(urlPair) < 2 {
-// 		err = errors.New("Decorators value miss")
-// 		return
-// 	}
-// 	url = strings.Trim(urlPair[1], " ")
-
-// 	methodPair := strings.Split(des[2], ":")
-// 	if len(methodPair) < 2 {
-// 		err = errors.New("Decorators value miss")
-// 		return
-// 	}
-// 	method = strings.Trim(methodPair[1], " ")
-// 	return
-// }
 
 func isSpace(char rune) bool {
 	if char == ' ' || char == '\t' {
@@ -51,13 +28,6 @@ func isAt(char rune) bool {
 
 func isColon(char rune) bool {
 	if char == ':' {
-		return true
-	}
-	return false
-}
-
-func isAlpha(char rune) bool {
-	if (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') {
 		return true
 	}
 	return false
