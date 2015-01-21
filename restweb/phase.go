@@ -79,8 +79,8 @@ func phaseApp(decorator string) error {
 	}
 
 	for k, v := range pair {
-		switch k {
-		case "URL":
+		switch strings.ToLower(k) {
+		case "url":
 			adec.URL = v
 		case "method":
 			adec.Method = v

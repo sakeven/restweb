@@ -91,7 +91,7 @@ func walkAstFiles(fset *token.FileSet, path string, pkg *ast.Package) {
 
 			if gen, ok := decl.(*ast.GenDecl); ok && gen.Tok == token.TYPE {
 				spec := gen.Specs[0]
-				if ts, ok := spec.(*ast.TypeSpec); ok && ts.Comment.Text() == "@Controller\n" {
+				if ts, ok := spec.(*ast.TypeSpec); ok && strings.ToLower(ts.Comment.Text()) == "@controller\n" {
 					ControllerName = ts.Name.Name
 					ContrInfos = append(ContrInfos, ControllerInfo{PkgPath: path, PkgName: pkg.Name, Name: ControllerName})
 				}
