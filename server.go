@@ -17,10 +17,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	do_filter := func(when int) bool {
 		for e := filterList.Front(); e != nil; e = e.Next() {
 			filter := e.Value.(*Filters)
+			path := r.URL.Path
+			path = strings.TrimRight(path, "/") + "/"
 
 			if filter.When == when &&
 				(filter.Method == r.Method || filter.Method == ANY) &&
-				filter.Rx.MatchString(r.URL.Path) {
+				filter.Rx.MatchString(path) {
 				if filter.Filter(ctx) {
 					return true
 				}
@@ -96,12 +98,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // 运行服务器
 func Run() error {
-	if err := LoadRouter(); err != nil { //import routers
+	LoadRouter("config/default_router.conf")
+	if err := LoadRouter("config/router.conf"); err != nil { //import routers
 		return err
 	}
+	Logger.Info("Start Server at " + cfg.Port + " Port. Please visit http://localhost" + cfg.Port)
 	if cfg.SessOn {
 		SessionManager = NewManager()
-		Logger.Info("Start New Session manager")
+		Logger.Info("Start New Session manager.")
 		go SessionManager.GC()
 	}
 	return http.ListenAndServe(cfg.Port, &Server{})

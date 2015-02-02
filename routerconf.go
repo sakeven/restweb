@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-func LoadRouter() error {
-	file, err := os.Open("config/router.conf")
+func LoadRouter(conf string) error {
+	file, err := os.Open(conf)
 	if err != nil {
 		return err
 	}
