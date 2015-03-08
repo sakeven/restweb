@@ -68,6 +68,9 @@ func walkFn(path string, info os.FileInfo, err error) error {
 
 func walkAstFiles(fset *token.FileSet, path string, pkg *ast.Package) {
 	ControllerName := ""
+	if pkg == nil {
+		return
+	}
 	for _, file := range pkg.Files {
 		for _, decl := range file.Decls {
 
