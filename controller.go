@@ -78,6 +78,16 @@ func (c *Controller) RenderTemplate(tplfiles ...string) {
 	}
 }
 
+func (c *Controller) RenderJson() {
+	r, err := c.JsonReader(c.Output)
+	if err != nil {
+		_, err = io.Copy(c.W, r)
+	}
+	if err != nil {
+		c.Error("No such page", http.StatusNotFound)
+	}
+}
+
 func (c *Controller) Render() { //auto render-> views/ControllerName/ActionName.tpl
 	tplpath := "views/" + strings.ToLower(c.Name) + "/" + strings.ToLower(c.Action) + ".tpl"
 	c.RenderTemplate("views/layout.tpl", tplpath)
@@ -92,7 +102,7 @@ func (ct *Controller) GetAction(path string, pos int) string {
 	return ""
 }
 
-func (ct *Controller) PostReader(i interface{}) (r io.Reader, err error) {
+func (ct *Controller) JsonReader(i interface{}) (r io.Reader, err error) {
 	b, err := json.Marshal(i)
 	if err != nil {
 		return
