@@ -30,19 +30,21 @@ type RouterInfo struct {
 var ContrInfos []ControllerInfo
 var RouterInfos []RouterInfo
 
-func buildApp() {
+func buildApp() (err error) {
 	filepath.Walk(appName+"/controller", walkFn)
 	generateMain()
 	generateRouter()
 	os.Chdir(appName)
 	cmd := exec.Command("go", "build")
-	cmd.Stdout = os.Stderr
-	err := cmd.Run()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
 	if err != nil {
-		log.Println("Build Failed\n[Error] ", err)
+		log.Println(appName+" Build Failed\n[Error] ", err)
 	} else {
-		log.Println("Build Succeed")
+		log.Println(appName + " Build Succeed")
 	}
+	return
 }
 
 func walkFn(path string, info os.FileInfo, err error) error {
@@ -53,7 +55,7 @@ func walkFn(path string, info os.FileInfo, err error) error {
 	fset := &token.FileSet{}
 	pkgs, err := parser.ParseDir(fset, path, nil, parser.ParseComments|parser.AllErrors)
 	if err != nil {
-		log.Println(err)
+		log.Println("[Error]", err)
 		return err
 	}
 	var pkg *ast.Package
@@ -128,7 +130,7 @@ func generateMain() {
 	`
 	t, err := template.New("foo").Parse(tpl)
 	if err != nil {
-		log.Println(err)
+		log.Println("[Error]", err)
 		return
 	}
 	bf := bytes.NewBufferString("")
@@ -136,15 +138,15 @@ func generateMain() {
 	data["ContrInfos"] = ContrInfos
 	err = t.Execute(bf, data)
 	if err != nil {
-		log.Println(err)
+		log.Println("[Error]", err)
 	}
 	b, err := format.Source([]byte(bf.String()))
 	if err != nil {
-		log.Println(err)
+		log.Println("[Error]", err)
 	}
 	f, err := os.Create(appName + "/main.go")
 	if err != nil {
-		log.Println(err)
+		log.Println("[Error]", err)
 		return
 	}
 	f.Write(b)
@@ -159,17 +161,17 @@ func generateRouter() {
 `
 	t, err := template.New("foo").Parse(tpl)
 	if err != nil {
-		log.Println(err)
+		log.Println("[Error]", err)
 		return
 	}
 	bf, err := os.Create(appName + "/config/router.conf")
 	if err != nil {
-		log.Println(err)
+		log.Println("[Error]", err)
 	}
 	data := make(map[string]interface{})
 	data["RouterInfos"] = RouterInfos
 	err = t.Execute(bf, data)
 	if err != nil {
-		log.Println(err)
+		log.Println("[Error]", err)
 	}
 }

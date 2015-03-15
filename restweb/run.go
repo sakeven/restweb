@@ -7,7 +7,9 @@ import (
 )
 
 func runApp() {
-	buildApp()
+	if buildApp() != nil {
+		return
+	}
 
 	os.Chdir(appName)
 
