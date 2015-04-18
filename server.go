@@ -82,7 +82,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if do_filter(Middle) {
 			return
 		}
-
 		rv = make([]reflect.Value, 0)
 		for _, j := range matchs {
 			rw := reflect.ValueOf(j)

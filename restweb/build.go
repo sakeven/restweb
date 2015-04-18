@@ -98,7 +98,8 @@ func walkAstFiles(fset *token.FileSet, path string, pkg *ast.Package) {
 				spec := gen.Specs[0]
 				if ts, ok := spec.(*ast.TypeSpec); ok && strings.ToLower(ts.Comment.Text()) == "@controller\n" {
 					ControllerName = ts.Name.Name
-					path = strings.Replace(path, "\\", "/", -1) // windows use "\" as dir separator.
+					path = strings.Replace(path, "\\", "/", -1) // windows use '\' as dir separator.
+					path = strings.Replace(path, "//", "/", -1) // remove useless '/'
 					ContrInfos = append(ContrInfos, ControllerInfo{PkgPath: path, PkgName: pkg.Name, Name: ControllerName})
 				}
 			}
