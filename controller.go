@@ -74,18 +74,21 @@ func (c *Controller) RenderTemplate(tplfiles ...string) {
 	}
 
 	if err != nil {
+		Logger.Debug(err)
 		c.Error("No such page", http.StatusNotFound)
 	}
 }
 
 func (c *Controller) RenderJson() {
+
 	r, err := c.JsonReader(c.Output)
-	if err != nil {
+	if err == nil {
 		_, err = io.Copy(c.W, r)
 	}
 	if err != nil {
 		c.Error("No such page", http.StatusNotFound)
 	}
+
 }
 
 func (c *Controller) Render() { //auto render-> views/ControllerName/ActionName.tpl
