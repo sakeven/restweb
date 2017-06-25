@@ -26,6 +26,7 @@ func LoadRouter(conf string) error {
 		}
 		cnt += 1
 		line = strings.Trim(line, "\n")
+		line = strings.Trim(line, "\r\n")
 		if line == "" || line[0] == '#' { //if this line is a comment
 			continue
 		}
