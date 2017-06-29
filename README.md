@@ -3,7 +3,7 @@ restweb
 
 light web framework for go
 
-##Features
+## Features
 
 1. 支持路由配置文件, 支持控制器方法参数传入
 2. 模板自动渲染
@@ -12,13 +12,13 @@ light web framework for go
 5. 过滤和拦截
 	
 
-##TODO List:
+## TODO List:
 
 4. 配置文件
 
-##使用文档
+## 使用文档
 
-###Install cmd tool
+### Install cmd tool
 ```bash
 cd restweb/restweb
 go install
@@ -33,7 +33,7 @@ restweb run app
 restweb clean app
 ```
 
-###简介
+### 简介
 
 restweb 采用 MVC 模式并支持RESTful API 设计，是一个具有丰富特性的轻量级web框架
 
@@ -56,7 +56,7 @@ restweb 采用 MVC 模式并支持RESTful API 设计，是一个具有丰富特�
 注册控制器，注册的控制器必须具有 Router 接口
 	
 	func RegisterController(controller Router)
-###路由
+### 路由
 
 1. 可以将路由定义在一个单独的文件中(config/router.conf)
 	
@@ -76,7 +76,7 @@ restweb 采用 MVC 模式并支持RESTful API 设计，是一个具有丰富特�
 
 		AddRouter(method string, pattern string, controllerName string, action string)
 		
-###上下文
+### 上下文
 
 上下文Context定义为：
 
@@ -108,7 +108,7 @@ restweb 采用 MVC 模式并支持RESTful API 设计，是一个具有丰富特�
 
 		func (c *Context) Error(err string, code int)
 		
-###过滤器
+### 过滤器
 过滤器是可以针对特定路由和上下文环境处理的restweb中间件
 
 	type Filter func(ctx *Context) bool
@@ -128,7 +128,7 @@ restweb 采用 MVC 模式并支持RESTful API 设计，是一个具有丰富特�
 
 		func RegisterFilters(method string, pattern string, when int, filter Filter) 
 		
-###模板
+### 模板
 
 1. 渲染模板文件 
 	func (c *Controller) RenderTemplate(tplfiles ...string)
@@ -144,4 +144,4 @@ restweb 采用 MVC 模式并支持RESTful API 设计，是一个具有丰富特�
 4. 本框架自带的模板函数
 
 
-###调试
+### 调试
